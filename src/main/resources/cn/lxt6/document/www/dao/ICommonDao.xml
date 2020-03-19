@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.lxt6.document.www.dao.ICommonDao">
+    <insert id="insert" parameterType="map">
+        insert into ${tabName}
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <foreach collection="parMap.entrySet()" item="value" index="key">
+                <if test='value!=null'>
+                    ${key},
+                </if>
+            </foreach>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <foreach collection="parMap.entrySet()" item="value" index="key">
+                <if test='value!=null'>
+                    '${value}',
+                </if>
+            </foreach>
+        </trim>
+    </insert>
+    <update id="update" parameterType="map">
+        update ${tabName}
+        <set>
+            <trim suffixOverrides=",">
+                <foreach collection="setMap.entrySet()" item="value" index="key">
+                    <if test='value!=null'>
+                        ${key}='${value}',
+                    </if>
+                </foreach>
+            </trim>
+        </set>
+        <where>
+            <foreach collection="whereMap.entrySet()" item="value" index="key">
+                <if test='value!=null'>
+                    and ${key}='${value}'
+                </if>
+            </foreach>
+        </where>
+    </update>
+    <delete id="delete" parameterType="map">
+        delete ${tabName}
+        <where>
+            <foreach collection="whereMap.entrySet()" item="value" index="key">
+                <if test='value!=null'>
+                    and ${key}='${value}'
+                </if>
+            </foreach>
+        </where>
+    </delete>
+    <select id="get" parameterType="map">
+        select
+        <trim suffixOverrides=",">
+            <foreach collection="columns" item="column" index="index">
+                    ${column},
+            </foreach>
+        </trim>
+        from ${tabName}
+        <where>
+            <foreach collection="whereMap.entrySet()" item="value" index="key">
+                <if test='value!=null'>
+                    and ${key}='${value}'
+                </if>
+            </foreach>
+        </where>
+    </select>
+</mapper>

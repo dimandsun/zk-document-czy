@@ -1,0 +1,34 @@
+server:
+  port: 8082
+
+
+logging:
+  file:
+    path: /log
+  pattern:
+#    console: '%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger- %msg%n'
+    file: '%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger- %msg%n'
+spring:
+  datasource:
+    mysql-czy-test:
+      type: com.alibaba.druid.pool.DruidDataSource
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://106.54.230.187:3306/czy?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=GMT&allowPublicKeyRetrievalx=true&allowMultiQueries=true
+      username: root
+      password: chen
+      initial-size: 1
+      min-idle: 1
+      max-active: 20
+      test-on-borrow: false
+      test-on-return: true
+      test-while-idle: true
+      time-between-eviction-runs-millis: 60000
+      min-evictable-idle-time-millis: 300000
+      remove-abandoned: true
+      log-abandoned: true
+      validation-query: select 1
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+mybatis-plus:
+  type-enums-package: cn.lexiaotongvip.www.enums
