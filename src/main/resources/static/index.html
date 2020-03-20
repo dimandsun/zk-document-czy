@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<head>
+    <title>文档管理-首页</title>
+    <meta charset='utf-8'>
+    <script src="js/vue.js" type="text/javascript" charset="utf-8"></script>
+    <script src="js/axios.min.js" type="text/javascript" charset="utf-8"></script>
+</head>
+<body>
+<div id="fileSubmit">
+    <h4>{{ msg }}</h4>
+    <input type="file" ref="file" multiple="multiple"/><hr>
+    <button type="button" @click="submit">提交</button>
+    <p style="color: red">{{submitResult}}</p>
+</div>
+<script>
+    var v = new Vue({
+        el: "#fileSubmit",
+        data: {
+            msg: "将html形式的接口文档存入数据库：",
+            submitResult:"",
+        },
+        methods: {
+            submit: function () {
+                var files = this.$refs.file.files;
+                if (files.length==0){
+                    v.submitResult="请选择要写入的文件!"
+                    return;
+                }
+                var fd = new FormData();
+                var fileNum =0;//html文件数目
+                for(var i=0;i<files.length;i++){
+                    if (files[i].name.indexOf(".html")<0){
+                        continue;
+                    }
+                    fileNum++;
+                    fd.append("files", files[i]);
+                }
+                if (fileNum==0){
+                    v.submitResult="请选择html文件!"
+                    return;
+                }
+                v.submitResult="正在插入数据,请等待写入结果....";
+                axios.post('/md2Doc',fd).then(function(res){
+                    v.submitResult=res.data;
+                });
+            }
+        }
+    });
+</script>
+</body>

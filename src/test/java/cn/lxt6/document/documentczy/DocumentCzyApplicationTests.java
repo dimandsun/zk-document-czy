@@ -14,7 +14,7 @@ class DocumentCzyApplicationTests {
     private IDocService docService;
     @Test
     void contextLoads() {
-        docService.md2Doc("E:\\work\\wd");
+//        docService.md2Doc("E:\\work\\wd");
     }
 
 }

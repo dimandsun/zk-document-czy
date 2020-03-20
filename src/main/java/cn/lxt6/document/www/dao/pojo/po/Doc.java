@@ -1,5 +1,6 @@
 package cn.lxt6.document.www.dao.pojo.po;
 import cn.lxt6.document.www.dao.enums.DocTypeEnum;
+import cn.lxt6.document.www.dao.enums.TestLevelEnum;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
@@ -17,6 +18,9 @@ public class Doc {
 
 	/*'文档说明'*/
 	private String des;
+
+	/*路由不包括ip:端口 参数*/
+	private String route;
 
 	/*'请求地址'*/
 	private String url;
@@ -41,10 +45,28 @@ public class Doc {
 	@JsonProperty("doc_mode_id")
 	private Integer docModeId;
 
+	/*测试等级*/
+	@JsonProperty("test_level")
+	private TestLevelEnum testLevel;
 
 	private List<DocPar> questParList;
 
 	private List<DocPar> resultParList;
+
+	public TestLevelEnum getTestLevel() {
+		return testLevel;
+	}
+
+	public void setTestLevel(TestLevelEnum testLevel) {
+		this.testLevel = testLevel;
+	}
+
+	public String getRoute() {
+		return route;
+	}
+	public void setRoute(String route) {
+		this.route = route;
+	}
 
 	public Integer getDocModeId() {
 		return docModeId;

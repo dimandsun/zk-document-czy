@@ -496,5 +496,32 @@ public class StringUtil extends StringUtils {
         System.out.println(upFirst(a));
     }
 
+    /**
+     * 拼接字符串 参数1： 姓名：{},年纪：{} ,可变参数 xm,12
+     * 可变参数替换字符串1中的{}
+     * @param msg
+     * @param childStrs
+     * @return
+     */
+    public static String join(String msg, Object... childStrs) {
+        if (childStrs == null || childStrs.length < 1) {
+            return msg;
+        }
+        for (Object v : childStrs) {
+            if (v == null) {
+                v = "";
+            }
+            msg = msg.replaceFirst("\\{}", v.toString());
+        }
+        return msg;
+    }
 
+    /**
+     * 得到html中的文本内容。会保留换行符、制表符
+     * @param htmlContent
+     * @return
+     */
+    public static String getContent(String htmlContent){
+        return htmlContent.replaceAll("</?[^>]+>", "");
+    }
 }

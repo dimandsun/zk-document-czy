@@ -9,7 +9,10 @@ import cn.lxt6.document.www.util.StringUtil;
  * @description 文档类型
  */
 public enum DocTypeEnum implements IEnum<Integer> {
-    TableStructure(1,"数据库表结构"),Post(2,"post请求接口"),Get(3,"get请求接口"),Delete(4,"delete请求接口"),Put(5,"put请求接口");
+    TableStructure(1,"数据库表结构")
+    ,Post(2,"post请求接口"),Get(3,"get请求接口"),Delete(4,"delete请求接口"),Put(5,"put请求接口")
+    ,Quest(6,"get/post请求接口")
+    ;
 
     private Integer id;
     private String msg;

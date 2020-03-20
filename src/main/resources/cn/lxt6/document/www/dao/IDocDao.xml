@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="cn.lxt6.document.www.dao.IDocDao">
-    <insert id="insertList" parameterType="map">
+    <select id="insertList" parameterType="map" resultType="int">
+        set @count:=0;
         <foreach collection="docList" item="doc" index="index">
-            set @hasAdd=IF(1=(SELECT 1 from doc where url= '${doc.url}'),1,0);
-
             insert into doc(
             <trim suffixOverrides=",">
                 <foreach collection="doc.entrySet()" item="value" index="key">
@@ -22,46 +21,51 @@
                 </foreach>
             </trim>
             );
-            select @doc_id:=LAST_INSERT_ID();
-            <foreach collection="doc.questParList" item="par" index="index">
-                insert into doc_par(doc_id,
-                <trim suffixOverrides=",">
-                    <foreach collection="par.entrySet()" item="value" index="key">
-                        <if test='value!=null'>
-                            ${key},
-                        </if>
-                    </foreach>
-                </trim>
-                )values(@doc_id,
-                <trim suffixOverrides=",">
-                    <foreach collection="par.entrySet()" item="value" index="key">
-                        <if test='value!=null'>
-                            '${value}',
-                        </if>
-                    </foreach>
-                </trim>
-                );
-            </foreach>
-            <foreach collection="doc.resultParList" item="par" index="index">
-                insert into doc_par(doc_id,
-                <trim suffixOverrides=",">
-                    <foreach collection="par.entrySet()" item="value" index="key">
-                        <if test='value!=null'>
-                            ${key},
-                        </if>
-                    </foreach>
-                </trim>
-                )values(@doc_id,
-                <trim suffixOverrides=",">
-                    <foreach collection="par.entrySet()" item="value" index="key">
-                        <if test='value!=null'>
-                            '${value}',
-                        </if>
-                    </foreach>
-                </trim>
-                );
-            </foreach>
-
+            set @doc_id:=LAST_INSERT_ID();
+            <if test="doc.questParList !=null">
+                <foreach collection="doc.questParList" item="par" index="index">
+                    insert into doc_par(doc_id,
+                    <trim suffixOverrides=",">
+                        <foreach collection="par.entrySet()" item="value" index="key">
+                            <if test='value!=null'>
+                                ${key},
+                            </if>
+                        </foreach>
+                    </trim>
+                    )values(@doc_id,
+                    <trim suffixOverrides=",">
+                        <foreach collection="par.entrySet()" item="value" index="key">
+                            <if test='value!=null'>
+                                '${value}',
+                            </if>
+                        </foreach>
+                    </trim>
+                    );
+                </foreach>
+            </if>
+            <if test="doc.resultParList !=null">
+                <foreach collection="doc.resultParList" item="par" index="index">
+                    insert into doc_par(doc_id,
+                    <trim suffixOverrides=",">
+                        <foreach collection="par.entrySet()" item="value" index="key">
+                            <if test='value!=null'>
+                                ${key},
+                            </if>
+                        </foreach>
+                    </trim>
+                    )values(@doc_id,
+                    <trim suffixOverrides=",">
+                        <foreach collection="par.entrySet()" item="value" index="key">
+                            <if test='value!=null'>
+                                '${value}',
+                            </if>
+                        </foreach>
+                    </trim>
+                    );
+                </foreach>
+            </if>
+            set @count=@count+1;
         </foreach>
-    </insert>
+        select @count;
+    </select>
 </mapper>
