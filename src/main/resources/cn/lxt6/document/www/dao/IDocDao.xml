@@ -1,8 +1,44 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="cn.lxt6.document.www.dao.IDocDao">
-    <select id="insertList" parameterType="map" resultType="int">
-        set @count:=0;
+    <resultMap id="docMap" type="Doc">
+        <!--        doc.id,doc.name,doc.route,doc.des,doc.url,doc.quest_example,doc.result_example1,doc.result_example2,doc.doc_type,doc.doc_mode_id,doc.test_level-->
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="route" column="route"/>
+        <result property="des" column="des"/>
+        <result property="url" column="url"/>
+        <result property="questExample" column="quest_example"/>
+        <result property="resultExample1" column="result_example1"/>
+        <result property="resultExample2" column="result_example2"/>
+        <result property="docType" column="doc_type"/>
+        <result property="docModeId" column="doc_mode_id"/>
+        <result property="testLevel" column="test_level"/>
+        <!--            id,doc_id,name,des,notes,data_type,length,is_must,par_type-->
+        <collection property="questParList" ofType="DocPar">
+            <id property="id" column="qpid"/>
+            <result property="docId" column="qpdoc_id"/>
+            <result property="name" column="qpname"/>
+            <result property="notes" column="qpnotes"/>
+            <result property="length" column="qplength"/>
+            <result property="isMust" column="qpis_must"/>
+            <result property="parType" column="qppar_type"/>
+        </collection>
+        <collection property="resultParList" ofType="DocPar">
+
+            <id property="id" column="rpid"/>
+            <result property="docId" column="rpdoc_id"/>
+            <result property="name" column="rpname"/>
+            <result property="notes" column="rpnotes"/>
+            <result property="length" column="rplength"/>
+            <result property="isMust" column="rpis_must"/>
+            <result property="parType" column="rppar_type"/>
+        </collection>
+    </resultMap>
+
+    <select id="insertList" parameterType="map" resultMap="docMap">
+        set @ids:='';
+        set @idNum:=0;
         <foreach collection="docList" item="doc" index="index">
             insert into doc(
             <trim suffixOverrides=",">
@@ -64,8 +100,38 @@
                     );
                 </foreach>
             </if>
-            set @count=@count+1;
+            set @ids=@ids+','+@doc_id;
+            set @idNum=@idNum+1;
         </foreach>
-        select @count;
+        select
+        doc.id,doc.name,doc.route,doc.des,doc.url,doc.quest_example,doc.result_example1,doc.result_example2,doc.doc_type,doc.doc_mode_id,doc.test_level
+        ,qp.id qpid,qp.doc_id qpdoc_id,qp.name qpname,qp.des qpdes,qp.notes qpnotes,qp.data_type qpdata_type,qp.length
+        qplength,qp.is_must qpis_must,qp.par_type par_type
+        ,rp.id rpid,rp.doc_id rpdoc_id,rp.name rpname,rp.des rpdes,rp.notes rpnotes,rp.data_type rpdata_type,rp.length
+        rplength,rp.is_must rpis_must,rp.par_type par_type
+        from doc
+        inner join (select SUBSTRING_INDEX(@ids, ",", @idNum) id) a on a.id=doc.id
+        left join doc_par qp on qp.doc_id=doc.id and qp.par_type=1
+        left join doc_par rp on qp.doc_id=doc.id and rp.par_type=2
+
+
+    </select>
+    <select id="getList" parameterType="map" resultMap="docMap">
+               select
+        doc.id,doc.name,doc.route,doc.des,doc.url,doc.quest_example,doc.result_example1,doc.result_example2,doc.doc_type,doc.doc_mode_id,doc.test_level
+        ,qp.id qpid,qp.doc_id qpdoc_id,qp.name qpname,qp.des qpdes,qp.notes qpnotes,qp.data_type qpdata_type,qp.length
+        qplength,qp.is_must qpis_must,qp.par_type par_type
+        ,rp.id rpid,rp.doc_id rpdoc_id,rp.name rpname,rp.des rpdes,rp.notes rpnotes,rp.data_type rpdata_type,rp.length
+        rplength,rp.is_must rpis_must,rp.par_type par_type
+        from doc
+        left join doc_par qp on qp.doc_id=doc.id and qp.par_type=1
+        left join doc_par rp on qp.doc_id=doc.id and rp.par_type=2
+        <where>
+            <foreach collection="whereMap.entrySet()" item="value" index="key">
+                <if test='value!=null'>
+                    and doc.${key} like '%${value}%'
+                </if>
+            </foreach>
+        </where>
     </select>
 </mapper>

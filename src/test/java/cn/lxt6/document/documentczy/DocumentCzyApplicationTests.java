@@ -10,11 +10,5 @@ import org.springframework.test.context.junit4.SpringRunner;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 class DocumentCzyApplicationTests {
-    @Autowired
-    private IDocService docService;
-    @Test
-    void contextLoads() {
-//        docService.md2Doc("E:\\work\\wd");
-    }
 
 }

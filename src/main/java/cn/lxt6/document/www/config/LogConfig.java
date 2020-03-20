@@ -15,11 +15,11 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class LogConfig implements WebMvcConfigurer {
 
     /**
-     * NB蓝牙设备访问设备管理中心日志
+     *  访问接口错误
      */
     @Bean
-    public Logger machineLog(){
-        return LoggerFactory.getLogger("machineManager_log");
+    public Logger errQuestLog(){
+        return LoggerFactory.getLogger("err_quest_log");
     }
     /**
      * 客户端访问日志

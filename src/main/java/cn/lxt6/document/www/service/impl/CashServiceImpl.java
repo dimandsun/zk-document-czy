@@ -60,18 +60,18 @@ public class CashServiceImpl implements ICashService {
     }
     /**
      * 接口文档批量插入缓存，返回插入数量
-     * @param mapList
+     * @param docList
      * @return
      */
     @Override
-    public Integer setDocList(List<MyMap> mapList) {
+    public Integer setDocList(List<Doc> docList) {
         Integer count = 0;
-        if (mapList==null||mapList.size()<1){
+        if (docList==null||docList.size()<1){
             return count;
         }
-        for (MyMap myMap:mapList){
-            String key = StringUtil.join("doc:{}_{}",myMap.get("doc_type")==null?"null":myMap.get("doc_type"),myMap.get("route"));
-            if (redisService.set(key,myMap)){
+        for (Doc doc:docList){
+            String key = StringUtil.join("doc:{}_{}",doc.getDocType()==null?"null":doc.getDocType().getValue(),doc.getRoute());
+            if (redisService.set(key,doc)){
                 count++;
             }
         }

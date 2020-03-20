@@ -7,23 +7,27 @@
 </head>
 <body>
 <div id="fileSubmit">
-    <h4>{{ msg }}</h4>
+    <h4>将html形式的接口文档存入数据库：</h4>
     <input type="file" ref="file" multiple="multiple"/><hr>
     <button type="button" @click="submit">提交</button>
-    <p style="color: red">{{submitResult}}</p>
+    <p style="color: red">{{fileSubmitMsg}}</p>
+</div>
+<div id="docQuery">
+    路由：<input type="text" ref="route"/> 名称：<input type="text" ref="name"/><hr>
+    <button type="button" @click="query">查询接口</button>
+    <p style="color: red">{{docQueryMsg}}</p>
 </div>
 <script>
-    var v = new Vue({
+    var fileSubmitV = new Vue({
         el: "#fileSubmit",
         data: {
-            msg: "将html形式的接口文档存入数据库：",
-            submitResult:"",
+            fileSubmitMsg:"",
         },
         methods: {
             submit: function () {
                 var files = this.$refs.file.files;
                 if (files.length==0){
-                    v.submitResult="请选择要写入的文件!"
+                    this.fileSubmitMsg="请选择要写入的文件!"
                     return;
                 }
                 var fd = new FormData();
@@ -36,12 +40,26 @@
                     fd.append("files", files[i]);
                 }
                 if (fileNum==0){
-                    v.submitResult="请选择html文件!"
+                    this.fileSubmitMsg="请选择html文件!"
                     return;
                 }
-                v.submitResult="正在插入数据,请等待写入结果....";
-                axios.post('/md2Doc',fd).then(function(res){
-                    v.submitResult=res.data;
+                this.fileSubmitMsg="正在插入数据,请等待写入结果....";
+                axios.post('/docs',fd).then(function(res){
+                    this.fileSubmitMsg=res.data;
+                });
+            }
+        }
+    });
+    var docQueryV = new Vue({
+        el: "#docQuery",
+        data: {
+            docQueryMsg:"",
+        }, methods: {
+            query: function () {
+                var route = this.$refs.route.value;
+                var name = this.$refs.name.value;
+                axios.get('/docs',{"name":name,"route":route}).then(function(res){
+                    this.docQueryMsg=res.data;
                 });
             }
         }

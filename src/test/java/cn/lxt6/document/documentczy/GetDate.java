@@ -13,6 +13,10 @@ import java.util.regex.Pattern;
  * @since 2020-03-19
  */
 public class GetDate {
+    @Test
+    public void a(){
+        System.out.println(11);
+    }
 
     @Test
     public void getDate() {
@@ -28,6 +32,7 @@ public class GetDate {
         String str = "<td>machineid</td> <td>设备编号</td> <td>String</td> <td></td> <td>Y</td> <td>设备编号</td>";
         List<String> list = getContentList(str.replace("<td></td>","<td> </td>"), "td", "li");
         System.out.println(list);
+
     }
 
 

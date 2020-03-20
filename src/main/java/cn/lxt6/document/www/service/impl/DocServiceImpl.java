@@ -1,5 +1,7 @@
 package cn.lxt6.document.www.service.impl;
 
+import cn.lxt6.document.www.controll.enums.ResCodeEnum;
+import cn.lxt6.document.www.controll.pojo.vo.ResultVO;
 import cn.lxt6.document.www.dao.IDocDao;
 import cn.lxt6.document.www.dao.enums.DocTypeEnum;
 import cn.lxt6.document.www.dao.enums.JavaTypeEnum;
@@ -47,7 +49,7 @@ public class DocServiceImpl implements IDocService {
      */
     @Transactional
     @Override
-    public String md2Doc(MultipartFile[] files) {
+    public ResultVO md2Doc(MultipartFile[] files) {
 /*      String filePath="E:\\work\\wd\\alipay_api.html";
         File pathFile = new File(filePath);
         if (pathFile==null){
@@ -76,28 +78,36 @@ public class DocServiceImpl implements IDocService {
                 docList.addAll(getDocList(new String(file.getBytes(),"UTF-8")));
             }
         } catch (IOException e) {
-            logger.error("文件解析出错!");
-            return "文件解析出错!";
+            return new ResultVO(ResCodeEnum.BusInExce,"文件解析出错!");
         }
         if (docList.size() == 0) {
-            return "没有读取到接口";
+            return new ResultVO(ResCodeEnum.Normal,"没有读取到接口!");
         }
         /*缓存中没有的接口才插入数据库*/
         List<MyMap> mapList = cashService.getNoCash(docList);
         if (mapList == null || mapList.size() < 1) {
-            return "没有需要插入数据库的接口！";
+            return new ResultVO(ResCodeEnum.Normal,"没有需要插入数据库的接口!");
         }
-        /*插入缓存和数据库*/
-        Integer dbCount = docDao.insertList(mapList);
-        Integer cashCount = cashService.setDocList(mapList);
-        if (!cashCount.equals(dbCount)) {
-            String msg = StringUtil.join("插入数据库{}条，插入缓存{}条。数据：{}", dbCount,cashCount,JsonUtil.model2Str(mapList));
-            logger.error(msg);
+        /*插入数据库*/
+        List<Doc> resultDocList = docDao.insertList(mapList);
+        if (resultDocList==null||resultDocList.size()<1){
+            return new ResultVO(ResCodeEnum.DBExce,"写入数据库失败!");
+        }
+        /*插入缓存*/
+        Integer cashCount = cashService.setDocList(resultDocList);
+        if (!cashCount.equals(resultDocList.size())) {
+            String msg = StringUtil.join("插入数据库{}条，插入缓存{}条。数据：{}", resultDocList.size(),cashCount,JsonUtil.model2Str(mapList));
+            return new ResultVO(ResCodeEnum.Normal,msg);
             /*回滚只会回滚数据库操作，redis缓存不会撤销，可能会存在bug*/
 //            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();//手动回滚事务
-            return msg;
         }
-        return "执行成功-插入数：" + dbCount;
+        return new ResultVO(resultDocList);
+    }
+
+    @Override
+    public ResultVO getList(Doc queryDoc) {
+        List<Doc> docList = docDao.getList(JsonUtil.model2Map(queryDoc));
+        return new ResultVO(docList);
     }
 
     private List<Doc> getDocList(String fileContent) {
@@ -166,7 +176,6 @@ public class DocServiceImpl implements IDocService {
         }
         return docList;
     }
-    /*http://machinemanager.lxt6.cn:10085/zk_equipment_api/consumer/SetEquipmentInfo?code=XXX&amp;*/
     private String getRountByURL(String url){
         if (StringUtil.isBlank(url)){
             return null;

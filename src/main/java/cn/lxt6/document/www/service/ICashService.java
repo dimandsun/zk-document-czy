@@ -16,5 +16,5 @@ public interface ICashService {
 
     List<MyMap> getNoCash(List<Doc> docList);
 
-    Integer setDocList(List<MyMap> mapList);
+    Integer setDocList(List<Doc> docList);
 }
