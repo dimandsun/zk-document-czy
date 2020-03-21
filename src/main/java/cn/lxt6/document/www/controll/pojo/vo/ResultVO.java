@@ -17,13 +17,13 @@ public class ResultVO<T> {
     @Autowired
     private Logger errQuestLog;
 
-    @JsonProperty("Data")
+    @JsonProperty("data")
     private T data;
-    @JsonProperty("Code")
+    @JsonProperty("code")
     private ResCodeEnum code;
-    @JsonProperty("Serial")
+    @JsonProperty("serial")
     private Long serial;
-    @JsonProperty("Message")
+    @JsonProperty("msg")
     private String message;
 
 

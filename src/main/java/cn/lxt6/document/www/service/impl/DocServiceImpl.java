@@ -10,7 +10,6 @@ import cn.lxt6.document.www.dao.pojo.po.Doc;
 import cn.lxt6.document.www.dao.pojo.po.DocPar;
 import cn.lxt6.document.www.service.ICashService;
 import cn.lxt6.document.www.service.IDocService;
-import cn.lxt6.document.www.util.FileUtil;
 import cn.lxt6.document.www.util.JsonUtil;
 import cn.lxt6.document.www.util.MyMap;
 import cn.lxt6.document.www.util.StringUtil;
@@ -21,12 +20,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -106,7 +103,10 @@ public class DocServiceImpl implements IDocService {
 
     @Override
     public ResultVO getList(Doc queryDoc) {
-        List<Doc> docList = docDao.getList(JsonUtil.model2Map(queryDoc));
+        if (queryDoc==null){
+            return new ResultVO(ResCodeEnum.ArgEmpty);
+        }
+        List<Map> docList = docDao.getList(JsonUtil.model2Map(queryDoc));
         return new ResultVO(docList);
     }
 

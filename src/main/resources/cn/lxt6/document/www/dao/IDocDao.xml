@@ -11,28 +11,32 @@
         <result property="questExample" column="quest_example"/>
         <result property="resultExample1" column="result_example1"/>
         <result property="resultExample2" column="result_example2"/>
-        <result property="docType" column="doc_type"/>
+        <result property="docType" column="doc_type" typeHandler="cn.lxt6.document.www.config.Integer2EnumTypeHandler"/>
         <result property="docModeId" column="doc_mode_id"/>
-        <result property="testLevel" column="test_level"/>
+        <result property="testLevel" column="test_level" typeHandler="cn.lxt6.document.www.config.EnumTypeHandler"/>
         <!--            id,doc_id,name,des,notes,data_type,length,is_must,par_type-->
         <collection property="questParList" ofType="DocPar">
             <id property="id" column="qpid"/>
             <result property="docId" column="qpdoc_id"/>
             <result property="name" column="qpname"/>
+            <result property="des" column="qpdes"/>
+            <result property="dataType" column="qpndata_type" typeHandler="cn.lxt6.document.www.config.String2EnumTypeHandler"/>
             <result property="notes" column="qpnotes"/>
             <result property="length" column="qplength"/>
             <result property="isMust" column="qpis_must"/>
-            <result property="parType" column="qppar_type"/>
+            <result property="parType" column="qppar_type" typeHandler="cn.lxt6.document.www.config.Integer2EnumTypeHandler"/>
         </collection>
         <collection property="resultParList" ofType="DocPar">
 
             <id property="id" column="rpid"/>
             <result property="docId" column="rpdoc_id"/>
             <result property="name" column="rpname"/>
+            <result property="des" column="rpdes"/>
+            <result property="dataType" column="rpndata_type" typeHandler="cn.lxt6.document.www.config.String2EnumTypeHandler"/>
             <result property="notes" column="rpnotes"/>
             <result property="length" column="rplength"/>
             <result property="isMust" column="rpis_must"/>
-            <result property="parType" column="rppar_type"/>
+            <result property="parType" column="rppar_type" typeHandler="cn.lxt6.document.www.config.EnumTypeHandler"/>
         </collection>
     </resultMap>
 
@@ -116,7 +120,8 @@
 
 
     </select>
-    <select id="getList" parameterType="map" resultMap="docMap">
+    <!--getList_fq 废弃原因：无法正确转换枚举类型-->
+    <select id="getList_fq" parameterType="map" resultMap="docMap">
                select
         doc.id,doc.name,doc.route,doc.des,doc.url,doc.quest_example,doc.result_example1,doc.result_example2,doc.doc_type,doc.doc_mode_id,doc.test_level
         ,qp.id qpid,qp.doc_id qpdoc_id,qp.name qpname,qp.des qpdes,qp.notes qpnotes,qp.data_type qpdata_type,qp.length
@@ -125,7 +130,7 @@
         rplength,rp.is_must rpis_must,rp.par_type par_type
         from doc
         left join doc_par qp on qp.doc_id=doc.id and qp.par_type=1
-        left join doc_par rp on qp.doc_id=doc.id and rp.par_type=2
+        left join doc_par rp on rp.doc_id=doc.id and rp.par_type=2
         <where>
             <foreach collection="whereMap.entrySet()" item="value" index="key">
                 <if test='value!=null'>
@@ -134,4 +139,9 @@
             </foreach>
         </where>
     </select>
+
+    <select id="getList" parameterType="map" resultMap="docMap">
+
+    </select>
+
 </mapper>

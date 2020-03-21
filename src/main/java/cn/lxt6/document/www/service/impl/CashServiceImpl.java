@@ -23,15 +23,16 @@ public class CashServiceImpl implements ICashService {
     @Autowired
     private IRedisService redisService;
 
+    private static String docKey = "doc:{}route:{}";
     /**
      * 判断指定接口是否存储在redis中
      *
-     * @param rount
+     * @param route
      * @return
      */
     @Override
-    public Boolean hasDoc(DocTypeEnum docTypeEnum, String rount) {
-        String key = StringUtil.join("doc:{}_{}",docTypeEnum==null?"null":docTypeEnum.getValue(),rount);
+    public Boolean hasDoc(DocTypeEnum docTypeEnum, String route) {
+        String key = StringUtil.join(docKey,docTypeEnum==null?"null":docTypeEnum.getValue(),route);
         return redisService.hasKey(key);
     }
 
@@ -55,7 +56,7 @@ public class CashServiceImpl implements ICashService {
     }
 
     public Doc getDoc(DocTypeEnum docTypeEnum, String rount){
-        String key = StringUtil.join("doc:{}_{}",docTypeEnum==null?"null":docTypeEnum.getValue(),rount);
+        String key = StringUtil.join(docKey,docTypeEnum==null?"null":docTypeEnum.getValue(),rount);
         return redisService.get(key,Doc.class);
     }
     /**
@@ -70,7 +71,7 @@ public class CashServiceImpl implements ICashService {
             return count;
         }
         for (Doc doc:docList){
-            String key = StringUtil.join("doc:{}_{}",doc.getDocType()==null?"null":doc.getDocType().getValue(),doc.getRoute());
+            String key = StringUtil.join(docKey,doc.getDocType()==null?"null":doc.getDocType().getValue(),doc.getRoute());
             if (redisService.set(key,doc)){
                 count++;
             }

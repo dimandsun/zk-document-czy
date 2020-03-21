@@ -8,44 +8,74 @@
 <body>
 <div id="fileSubmit">
     <h4>将html形式的接口文档存入数据库：</h4>
-    <input type="file" ref="file" multiple="multiple"/><hr>
+    <input type="file" ref="file" multiple="multiple"/>
+    <hr>
     <button type="button" @click="submit">提交</button>
     <p style="color: red">{{fileSubmitMsg}}</p>
 </div>
 <div id="docQuery">
-    路由：<input type="text" ref="route"/> 名称：<input type="text" ref="name"/><hr>
+    路由：<input type="text" ref="route"/> 名称：<input type="text" ref="name"/>
+    <hr>
     <button type="button" @click="query">查询接口</button>
     <p style="color: red">{{docQueryMsg}}</p>
+    <div :id="'doc_'+doc.id" v-for="doc,i in docList" :key="i">
+        <h5>{{doc.name}}</h5>
+        <h4 value="doc.doc_type">{{doc.doc_type_name}}</h4>
+        <h4>{{doc.route}}</h4><hr>
+        <a href="#">{{doc.url}}</a>
+        <table>
+            <thead><tr><th>参数名称</th><th>参数说明</th><th>参数类型</th><th>长度</th><th>必填</th><th>备注</th></tr></thead>
+            <tbody v-for="par,i in doc.questParList" :key="i">
+                <tr><td>{{par.name}}</td><td>{{par.des}}</td>
+                    <td>
+                        <span v-if="par.data_type==">
+
+                        </span>
+
+                    </td>
+                    <td>{{par.length}}</td>
+                    <td><span v-if="par.is_must==1">Y</span></td>
+                    <td>{{par.notes}}</td></tr>
+            </tbody>
+        </table>
+
+    </div>
 </div>
 <script>
     var fileSubmitV = new Vue({
         el: "#fileSubmit",
         data: {
-            fileSubmitMsg:"",
+            fileSubmitMsg: "",
         },
         methods: {
             submit: function () {
                 var files = this.$refs.file.files;
-                if (files.length==0){
-                    this.fileSubmitMsg="请选择要写入的文件!"
+                if (files.length == 0) {
+                    fileSubmitV.fileSubmitMsg = "请选择要写入的文件!"
                     return;
                 }
                 var fd = new FormData();
-                var fileNum =0;//html文件数目
-                for(var i=0;i<files.length;i++){
-                    if (files[i].name.indexOf(".html")<0){
+                var fileNum = 0;//html文件数目
+                for (var i = 0; i < files.length; i++) {
+                    if (files[i].name.indexOf(".html") < 0) {
                         continue;
                     }
                     fileNum++;
                     fd.append("files", files[i]);
                 }
-                if (fileNum==0){
-                    this.fileSubmitMsg="请选择html文件!"
+                if (fileNum == 0) {
+                    fileSubmitV.fileSubmitMsg = "请选择html文件!"
                     return;
                 }
-                this.fileSubmitMsg="正在插入数据,请等待写入结果....";
-                axios.post('/docs',fd).then(function(res){
-                    this.fileSubmitMsg=res.data;
+                fileSubmitV.fileSubmitMsg = "正在插入数据,请等待写入结果....";
+                axios.post('/docs', fd).then(function (res) {
+                    var isNormal = res.data.normal;
+                    var data = res.data.data;
+                    var msg = res.data.Message;
+                    if (data == null) {
+
+                    }
+                    fileSubmitV.fileSubmitMsg = msg;
                 });
             }
         }
@@ -53,13 +83,37 @@
     var docQueryV = new Vue({
         el: "#docQuery",
         data: {
-            docQueryMsg:"",
+            docQueryMsg: "",
+            docList:[
+                {id:null,name:null,des:null, route:null,url:null,
+                    doc_type:null,doc_type_name:null,
+                    doc_mode_id:null,test_level:null,
+                    quest_example:null,
+                    result_example1:null,
+                    result_example2:null,
+                    questParList:[{id:null,name:null,des:null,notes:null,doc_id:null,data_type:null,length:null,is_must:null,par_type:null}],
+                    resultParList:[{id:null,name:null,des:null,notes:null,doc_id:null,data_type:null,length:null,is_must:null,par_type:null}],
+                }
+            ]
         }, methods: {
             query: function () {
                 var route = this.$refs.route.value;
                 var name = this.$refs.name.value;
-                axios.get('/docs',{"name":name,"route":route}).then(function(res){
-                    this.docQueryMsg=res.data;
+                if (route == "" && name == "") {
+                    docQueryV.docQueryMsg = "请至少输入一个查询条件！";
+                    return;
+                }
+                docQueryV.docQueryMsg = ""
+                var par = {"name": name, "route": route};
+                // JSON.stringify(par)
+                axios.get('/docs', {params: par}).then(function (res) {
+                    var isNormal = res.data.normal;
+                    var docList = res.data.data;
+                    var msg = res.data.msg;
+                    docQueryV.fileSubmitMsg = msg;
+                    if (docList != null) {
+                        docQueryV.docList=docList;
+                    }
                 });
             }
         }

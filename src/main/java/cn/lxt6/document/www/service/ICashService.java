@@ -12,7 +12,7 @@ import java.util.List;
  * @since 2020-03-20
  */
 public interface ICashService {
-    Boolean hasDoc(DocTypeEnum docTypeEnum, String docUrl);
+    Boolean hasDoc(DocTypeEnum docTypeEnum, String route);
 
     List<MyMap> getNoCash(List<Doc> docList);
 

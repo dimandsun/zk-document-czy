@@ -5,6 +5,7 @@ import cn.lxt6.document.www.util.MyMap;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author chenzy
@@ -15,5 +16,5 @@ public interface IDocDao {
     /*批量插入数据，并且返回插入的数据*/
     List<Doc> insertList(@Param("docList")List<MyMap> docList);
 
-    List<Doc> getList(@Param("whereMap") MyMap parMap);
+    List<Map> getList(@Param("whereMap") MyMap parMap);
 }
